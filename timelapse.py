@@ -20,10 +20,12 @@ while clip_name == '':
     if not os.path.exists(clip_name):
         print('Clip does not exit at given path: {}'.format(clip_name))
         clip_name = ''
-output_name = input('Output clip path and name: ')
-if not output_name.endswith('.mp4'):
-    print('Output must be an mp4 file')
-    sys.exit(1)
+output_name = ''
+while output_name == '':
+    output_name = input('Output clip path and name: ')
+    if not output_name.endswith('.mp4'):
+        print('Output must be an mp4 file')
+        output_name = ''
 
 # general settings
 extract_f_per_x_s = int(input('Extract 1 frame per x second of input video: '))
@@ -35,6 +37,7 @@ clip = VideoFileClip(clip_name)
 frame_count = int(clip.end) + 1
 frame_count = int(frame_count / extract_f_per_x_s)
 print("Extracting {} frames from {}".format(frame_count, clip_name))
+print('{} will be {}'.format(output_name, formatted_remaining(frame_count / output_fps)))
 frame_digits = len(str(frame_count))
 
 # extract frames

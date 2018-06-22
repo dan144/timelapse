@@ -10,6 +10,7 @@ Uses Python3 and MoviePy
 ## Upcoming features
 
 * Allowing multiple input files to one unified output file
+* Option to create video with range of output FPS values and input frame sample rate
 * Rounding on times given
 * Code cleanup/refactoring
 
@@ -28,3 +29,7 @@ This script was used to produce the time lapse videos below:
 [1 frame per 8s of source footage, 30fps output](https://youtu.be/ZCyjla6Yr08)
 
 [1 frame per 16s of source footage, 30fps output](https://youtu.be/ITFrZJOJg6U)
+
+[1 frame per 32s of source footage, 30fps output](https://youtu.be/Tq79p_1vb_8)
+
+[1 frame per 64s of source footage, 30fps output](https://youtu.be/falzE-nRTfA)
