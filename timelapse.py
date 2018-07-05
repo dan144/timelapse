@@ -14,16 +14,32 @@ def formatted_remaining(rem):
     return s_rem
 
 # get input/output files
-clip_count = int(input('Number of input videos: '))
 clip_names = []
-for n in range(clip_count):
-    clip_name = ''
-    while clip_name == '':
-        clip_name = input('Path to clip {}: '.format(n+1))
-        if not os.path.exists(clip_name):
-            print('Clip does not exit at given path: {}'.format(clip_name))
-            clip_name = ''
-    clip_names.append(clip_name)
+clip_name = None
+while clip_name == None:
+    clip_name = input('Path to clip [empty to continue]: ')
+    if os.path.isdir(clip_name):
+        names = [os.path.join(clip_name, file_name) for file_name in sorted(os.listdir(clip_name))]
+        print("Input files:")
+        for name in names:
+            print(name)
+        answer = ''
+        while answer not in set('ynYN'):
+            answer = input('Are these input files correct, including order? [y/n] ')
+        if answer in set('yY'):
+            clip_names = names
+            break
+        else:
+            clip_name = None
+    elif os.path.exists(clip_name) and os.path.isfile(clip_name):
+        clip_names.append(clip_name)
+        clip_name = None
+    elif clip_name != '':
+        print('Clip does not exit at given path: {}'.format(clip_name))
+        clip_name = None
+if len(clip_names) == 0:
+    print("No input files given")
+    sys.exit(1)
 output_name = ''
 while output_name == '':
     output_name = input('Output clip path and name: ')
