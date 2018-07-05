@@ -53,23 +53,23 @@ start_time = time.time()
 rolling = []
 image_files = []
 index = 0
+frame_digits = len(str(total_frames))
 for clip, clip_name, frame_count in clips:
     print("Processing input file {}".format(clip_name))
-    frame_digits = len(str(frame_count))
     for t in range(1, frame_count*extract_f_per_x_s + 1, extract_f_per_x_s):
         index += 1
         zeros = ''.join('0' for i in range(frame_digits - len(str(index))))
         frame_name = zeros + str(index)
         if index == 1 or index % 5 == 0:
             print("Saving frame {}".format(frame_name))
-        frame_name = os.path.join(directory, "test_image{}.png".format(frame_name))
+        frame_name = os.path.join(directory, "image{}.png".format(frame_name))
         frame_start = time.time()
         image = clip.save_frame(frame_name, t=t-1)
         elapsed_time = time.time() - frame_start
         image_files.append(frame_name)
 
-        if len(rolling) > frame_count / 10 and len(rolling) > 5:
-            # keep the rolling average based on up to the last 10% of the input video
+        if len(rolling) > total_frames / 10 and len(rolling) > 5:
+            # keep the rolling average based on up to the last 10% of the input files
             rolling = rolling[1:]
         rolling.append(elapsed_time)
         if index == 1 or index % 5 == 0:
