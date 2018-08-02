@@ -22,7 +22,7 @@ class ClipMaster():
     def get_gps_frames(self, gps_filename):
         positions = []
         with open(gps_filename, 'r') as f:
-            i = 0
+            i = -1 # offset by -1 to accommodate early index in loop below
             for line in f:
                 i += 1
                 if i % gps_freq != 0:
@@ -44,6 +44,8 @@ class ClipMaster():
                          'size': '%dx%d' % self.gps_dimensions,
                          'maptype': 'roadmap',
                          'scale': 1}
+            # this API limits sampling to 2500 per day
+            # https://developers.google.com/maps/documentation/geocoding/usage-and-billing
             response = requests.get('http://maps.google.com/maps/api/staticmap', params=urlparams)
             filename = os.path.join(gps_directory, 'image_{}.png'.format(index))
             with open(filename, 'wb') as f:
@@ -55,6 +57,9 @@ class ClipMaster():
         clip, clip_name, gps_file, frame_count, offset = self.clips[clip_index]
         if gps_file:
             gps_images, gps_directory = self.get_gps_frames(gps_file)
+            self.print_safe('Extracted %d GPS samples' % len(gps_images))
+            if len(gps_images) != frame_count:
+                self.print_safe('Warning: GPS sample count does not match frame count; some GPS frames will be duplicated')
 
         start_time = time.time()
         self.rolling[clip_index] = []
@@ -66,7 +71,7 @@ class ClipMaster():
             zeros = ''.join('0' for i in range(self.frame_digits - len(str(index))))
             frame_name = zeros + str(index)
             if index == 1 or index % 5 == 0:
-                self.print_safe("[{}] - Saving frame {}".format(clip_name, index - offset))
+                self.print_safe("[{}] - Saving frame {}".format(clip_name, index))
             frame_name = os.path.join(directory, "image{}.png".format(frame_name))
             frame_start = time.time()
             clip.save_frame(frame_name, t=t-1)
@@ -74,8 +79,15 @@ class ClipMaster():
             if has_gps:
                 # add GPS overlay
                 image = Image.open(frame_name)
-                gps_overlay_location = (image.size[0] - self.gps_dimensions[0], image.size[1] - self.gps_dimensions[1])
-                image.paste(Image.open(gps_images[index-offset-1]), gps_overlay_location)
+                gps_overlay_location = (image.size[0] - self.gps_dimensions[0],
+                                        image.size[1] - self.gps_dimensions[1])
+                gps_index = index - offset - 1
+                # This logic is good, but if it is necessary, it implies there's a sampling mismatch
+                if gps_index < 0:
+                    gps_index = 0
+                elif gps_index >= len(gps_images):
+                    gps_index = len(gps_mages) - 1
+                image.paste(Image.open(gps_images[gps_index]), gps_overlay_location)
                 image.save(frame_name)
 
             elapsed_time = time.time() - frame_start

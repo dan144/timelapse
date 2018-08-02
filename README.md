@@ -2,14 +2,16 @@
 
 Takes a specified number of frames per second from input file.
 Creates the output video at a specified fps.
+Optionally add a map overlay based on GPS data.
+
 Suggest defaults are 1 frame per second from the input file
 and 30 FPS in the output video.
 
-Uses Python3 and MoviePy
+Uses Python3 with MoviePy and PIL
 
 ## Upcoming features
 
-* Allowing multiple input files to one unified output file
+* Map PiP mode with static map and location designated by a moving dot
 * Option to create video with range of output FPS values and input frame sample rate
 * Rounding on times given
 * Code cleanup/refactoring
@@ -33,3 +35,9 @@ This script was used to produce the time lapse videos below:
 [1 frame per 32s of source footage, 30fps output](https://youtu.be/Tq79p_1vb_8)
 
 [1 frame per 64s of source footage, 30fps output](https://youtu.be/falzE-nRTfA)
+
+Map PiP videos:
+
+[1 frame per 8s, 30fps output](https://www.youtube.com/watch?v=gI6gy8nDAzg)
+
+[1 frame per 4s, 30fps output](BROKEN - not yet created)
